@@ -25,7 +25,7 @@ SECRET_KEY = "5iqqev8_w3*i0zs8k)l(_j=t0drn9ipw2ugh-zhp&@tczgba(0"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["jacobo.com","127.0.0.1"]
 
 
 # Application definition
@@ -62,6 +62,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "platzigram.middleware.ProfileCompletioMiddleware",
 ]
 
 ROOT_URLCONF = "platzigram.urls"

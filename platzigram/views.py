@@ -16,6 +16,7 @@ def hello_world(request):
 def sorted_numbers(request):
     """Return a JSON"""
     numbers = [int(i) for i in request.GET["numbers"].split(",")]
+    numbers.sort()
     data = {"status": "ok", "numbers": numbers, "message": "Integers sorted correctly"}
     return JsonResponse(data)
 
