@@ -38,7 +38,7 @@ class ProfileAdmin(admin.ModelAdmin):
 
     # Lo que se va a mostrar al abrir el menú pa editar
     # Una tuplas con tuplas, las tuplas interiores tienen el nombre de la sección
-    # y un diccionario con los campos de esa sección, dicho diccionario recibe 
+    # y un diccionario con los campos de esa sección, dicho diccionario recibe
     # una tupla de tuplas, cada elemento de la tupla va en una fila, si se quieren juntos
     # se ponen ambos en una tupla interior
     fieldsets = (
@@ -62,19 +62,28 @@ class ProfileAdmin(admin.ModelAdmin):
 
     readonly_fields = ("created", "modified")
 
+
 class ProfileInline(admin.StackedInline):
     """peofile in-line admin for users"""
 
     model = Profile
     can_delete = False
-    verbose_name_plural = 'profiles'
+    verbose_name_plural = "profiles"
 
 
 class UserAdmin(BaseUserAdmin):
     """Add profile admin to base user admin."""
 
     inlines = (ProfileInline,)
-    list_display = ('username','email','first_name','last_name','is_active','is_staff')
+    list_display = (
+        "username",
+        "email",
+        "first_name",
+        "last_name",
+        "is_active",
+        "is_staff",
+    )
+
 
 admin.site.unregister(User)
-admin.site.register(User,UserAdmin)
+admin.site.register(User, UserAdmin)

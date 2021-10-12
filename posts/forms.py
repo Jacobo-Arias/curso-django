@@ -4,6 +4,7 @@ from django import forms
 # Models
 from posts.models import Posts
 
+
 class PostForm(forms.ModelForm):
     """Post model form"""
 
@@ -11,4 +12,4 @@ class PostForm(forms.ModelForm):
         """Form settings"""
 
         model = Posts
-        fields = ('user','profile','title','photo')
+        fields = ("user", "profile", "title", "photo")

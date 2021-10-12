@@ -11,7 +11,7 @@ class Profile(models.Model):
     Proxy model that extends the base data with other information
     """
 
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = "email"
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
