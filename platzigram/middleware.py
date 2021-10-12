@@ -3,6 +3,7 @@ from django.urls import reverse
 
 """platzigram middelware catalg"""
 
+
 class ProfileCompletioMiddleware:
     """Profile completion middleware.
 
@@ -10,15 +11,14 @@ class ProfileCompletioMiddleware:
     have their profile picture and biography
     """
 
-
-    def __init__(self,get_response):
+    def __init__(self, get_response):
         """Middleware initialization"""
         self.get_response = get_response
 
-    def __call__(self,request):
+    def __call__(self, request):
         """Code to be executed for each request
         before the view is called.
-        
+
         Esta parte de código se va a ejecutar cada vez que haya un request
 
         Y lo que dice es que si tiene sesión iniciada
@@ -28,11 +28,11 @@ class ProfileCompletioMiddleware:
         """
 
         if not request.user.is_anonymous:
+            # if not request.user.is_staff:
             profile = request.user.profile
             if not profile.picture or not profile.biography:
-                if request.path not in (reverse('update_profile'),reverse("logout")): 
-                    return redirect('update_profile')
-        
+                if request.path not in (reverse("update_profile"), reverse("logout")):
+                    return redirect("update_profile")
 
         response = self.get_response(request)
         return response

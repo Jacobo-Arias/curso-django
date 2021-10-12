@@ -3,12 +3,9 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 
-# models
-from django.contrib.auth.models import User
-from users.models import Profile
-
-#utils
-from django.db.utils import IntegrityError
+# Forms
+from users.forms import ProfileForm, SingupForm
+from django.contrib import messages
 
 # Create your views here.
 
@@ -32,42 +29,22 @@ def login_view(request):
             return redirect("feed")
     return render(request, "users/login.html")
 
-
 def singup_view(request):
     """Sing up view"""
     if request.method == "POST":
-        username = request.POST["username"]
-        password = request.POST["password"]
-        confirm_password = request.POST["password_confirmation"]
-        first_name = request.POST["first_name"]
-        last_name = request.POST["last_name"]
-        email = request.POST["email"]
-
-        if password != confirm_password:
-            return render(request, "users/singup.html", {"error":"Password confirmation does not match"})
-
-        else:
-            try:
-                user = User.objects.create_user(username=username,password=password)
-            except IntegrityError:
-                return render(request, "users/singup.html", {"error":"Username already taken"})
-            user.first_name = first_name
-            user.last_name = last_name
-            user.email = email
-            user.save()
-
-            profile = Profile(user=user)
-            profile.save()
-
-            login(request,user)
-            redirect("login")
-
-    elif request.method == "GET":
-        if request.user.is_authenticated:
+        form = SingupForm(request.POST)
+        if form.is_valid():
+            form.save()
             return redirect("feed")
-
-    return render(request, "users/singup.html")
-
+    
+    else:
+        form = SingupForm()
+        
+    return render(
+        request=request,
+        template_name="users/singup.html",
+        context={"form":form}
+    )
 
 @login_required
 def logout_view(request):
@@ -79,4 +56,26 @@ def logout_view(request):
 def update_profile(request):
     """Update a user"""
 
-    return render(request,"users/update_profile.html")
+    profile = request.user.profile
+    if request.method == "POST":
+        form = ProfileForm(request.POST, request.FILES)
+        if form.is_valid():
+            print(form.cleaned_data)
+            data = form.cleaned_data
+            profile.website = data["website"]
+            profile.phone_number = data["phone_number"]
+            profile.biography = data["biography"]
+            profile.picture = data["picture"]
+            profile.save()
+            messages.success(request, "Your profile has been updated!")
+            return redirect("feed")
+        else:
+            print("Error")
+    else:
+        form = ProfileForm()
+
+    return render(
+        request=request,
+        template_name="users/update_profile.html",
+        context={"profile": profile, "user": request.user, "form": form},
+    )
