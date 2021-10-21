@@ -22,7 +22,7 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user:
             login(request, user)
-            return redirect("feed")
+            return redirect("posts:feed")
         else:
             return render(
                 request, "users/login.html", {"error": "Invalid email or password "}
@@ -30,7 +30,7 @@ def login_view(request):
 
     elif request.method == "GET":
         if request.user.is_authenticated:
-            return redirect("feed")
+            return redirect("posts:feed")
     return render(request, "users/login.html")
 
 
@@ -40,7 +40,11 @@ def singup_view(request):
         form = SingupForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect("feed")
+            username = form.cleaned_data["username"]
+            password = form.cleaned_data["password"]
+            user = authenticate(request, username=username, password=password)
+            login(request, user)
+            return redirect("posts:feed")
 
     else:
         form = SingupForm()
@@ -54,7 +58,7 @@ def singup_view(request):
 def logout_view(request):
     """Logout view"""
     logout(request)
-    return redirect("login")
+    return redirect("users:login")
 
 
 @login_required
@@ -73,7 +77,7 @@ def update_profile(request):
             profile.picture = data["picture"]
             profile.save()
             messages.success(request, "Your profile has been updated!")
-            return redirect("feed")
+            return redirect("posts:feed")
         else:
             print("Error")
     else:

@@ -135,6 +135,6 @@ class SingupForm(forms.Form):
 
         user = User.objects.create_user(**data)
 
-        profile = Profile(user)
+        profile = Profile(user=user)
 
         profile.save()

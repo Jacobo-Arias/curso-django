@@ -1,7 +1,8 @@
+"""
+Middlewares propios
+"""
 from django.shortcuts import redirect
 from django.urls import reverse
-
-"""platzigram middelware catalg"""
 
 
 class ProfileCompletioMiddleware:
@@ -31,8 +32,8 @@ class ProfileCompletioMiddleware:
             # if not request.user.is_staff:
             profile = request.user.profile
             if not profile.picture or not profile.biography:
-                if request.path not in (reverse("update_profile"), reverse("logout")):
-                    return redirect("update_profile")
+                if request.path not in (reverse("users:update_profile"), reverse("users:logout")):
+                    return redirect("users:update_profile")
 
         response = self.get_response(request)
         return response

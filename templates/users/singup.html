@@ -10,7 +10,7 @@
         <p class="alert alert-danger"> {{ error }} </p>
     {% endif %}
 
-    <form action="{% url 'singup' %}" method=post>
+    <form action="{% url 'users:singup' %}" method=post>
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit" class="btn btn-primary btn-block mt-5">Register</button>
