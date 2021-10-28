@@ -25,7 +25,7 @@ from users.forms import SingupForm
 # Create your views here.
 
 
-class UserDetailView(LoginRequiredMixin,DetailView):
+class UserDetailView(LoginRequiredMixin, DetailView):
     """User detail view."""
 
     template_name = "users/detail.html"
@@ -43,13 +43,14 @@ class UserDetailView(LoginRequiredMixin,DetailView):
         user = self.get_object()
         context["posts"] = Posts.objects.filter(user=user).order_by("-created")
         return context
-    
+
 
 class LoginView(auth_views.LoginView):
     """Login class view"""
 
     template_name = "users/login.html"
     redirect_authenticated_user = True
+
 
 class SingUpView(FormView):
     """User sing up view."""
@@ -61,23 +62,22 @@ class SingUpView(FormView):
     def form_valid(self, form):
         """Save singup form data"""
         form.save()
-        username = form['username'].value()
-        password = form['password'].value()
+        username = form["username"].value()
+        password = form["password"].value()
 
-        user = authenticate(
-            self.request, username=username, password=password
-            )
-        
+        user = authenticate(self.request, username=username, password=password)
+
         login(self.request, user)
         return super().form_valid(form)
 
 
 class LogoutView(auth_views.LogoutView, LoginRequiredMixin):
     """Logout class view"""
+
     pass
 
 
-class UpdateProfileView(LoginRequiredMixin,UpdateView):
+class UpdateProfileView(LoginRequiredMixin, UpdateView):
     """Update a user"""
 
     template_name = "users/update_profile.html"
@@ -87,7 +87,7 @@ class UpdateProfileView(LoginRequiredMixin,UpdateView):
     def get_object(self):
         """Return user's  profile"""
         return self.request.user.profile
-    
+
     def get_success_url(self):
         """return ro user's profile"""
         username = self.object.user.username
