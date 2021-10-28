@@ -6,85 +6,89 @@ from django.shortcuts import render, redirect
 
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
+from django.urls import reverse, reverse_lazy
+from django.contrib.auth import views as auth_views
+
+# Views
+from django.views.generic import DetailView, FormView, UpdateView
+
+# Models
+from django.contrib.auth.models import User
+from posts.models import Posts
+from users.models import Profile
 
 # Forms
-from users.forms import ProfileForm, SingupForm
+from users.forms import SingupForm
 
 # Create your views here.
 
 
-def login_view(request):
-    """Login view"""
-    if request.method == "POST":
-        username = request.POST["username"]
-        password = request.POST["password"]
-        user = authenticate(request, username=username, password=password)
-        if user:
-            login(request, user)
-            return redirect("posts:feed")
-        else:
-            return render(
-                request, "users/login.html", {"error": "Invalid email or password "}
+class UserDetailView(LoginRequiredMixin,DetailView):
+    """User detail view."""
+
+    template_name = "users/detail.html"
+    slug_field = "username"
+    # el campo slug_url_kwarg es el que tiene el path en el url
+    # luego del str en el <str:[]>
+    # para este caso es <str:username> y por eso slug_url_kwarg es username
+    slug_url_kwarg = "username"
+    context_object_name = "user"
+    queryset = User.objects.all()
+
+    def get_context_data(self, **kwargs):
+        """Add user's posts to context."""
+        context = super().get_context_data(**kwargs)
+        user = self.get_object()
+        context["posts"] = Posts.objects.filter(user=user).order_by("-created")
+        return context
+    
+
+class LoginView(auth_views.LoginView):
+    """Login class view"""
+
+    template_name = "users/login.html"
+    redirect_authenticated_user = True
+
+class SingUpView(FormView):
+    """User sing up view."""
+
+    template_name = "users/singup.html"
+    form_class = SingupForm
+    success_url = reverse_lazy("users:login")
+
+    def form_valid(self, form):
+        """Save singup form data"""
+        form.save()
+        username = form['username'].value()
+        password = form['password'].value()
+
+        user = authenticate(
+            self.request, username=username, password=password
             )
-
-    elif request.method == "GET":
-        if request.user.is_authenticated:
-            return redirect("posts:feed")
-    return render(request, "users/login.html")
+        
+        login(self.request, user)
+        return super().form_valid(form)
 
 
-def singup_view(request):
-    """Sing up view"""
-    if request.method == "POST":
-        form = SingupForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data["username"]
-            password = form.cleaned_data["password"]
-            user = authenticate(request, username=username, password=password)
-            login(request, user)
-            return redirect("posts:feed")
-
-    else:
-        form = SingupForm()
-
-    return render(
-        request=request, template_name="users/singup.html", context={"form": form}
-    )
+class LogoutView(auth_views.LogoutView, LoginRequiredMixin):
+    """Logout class view"""
+    pass
 
 
-@login_required
-def logout_view(request):
-    """Logout view"""
-    logout(request)
-    return redirect("users:login")
-
-
-@login_required
-def update_profile(request):
+class UpdateProfileView(LoginRequiredMixin,UpdateView):
     """Update a user"""
 
-    profile = request.user.profile
-    if request.method == "POST":
-        form = ProfileForm(request.POST, request.FILES)
-        if form.is_valid():
-            print(form.cleaned_data)
-            data = form.cleaned_data
-            profile.website = data["website"]
-            profile.phone_number = data["phone_number"]
-            profile.biography = data["biography"]
-            profile.picture = data["picture"]
-            profile.save()
-            messages.success(request, "Your profile has been updated!")
-            return redirect("posts:feed")
-        else:
-            print("Error")
-    else:
-        form = ProfileForm()
+    template_name = "users/update_profile.html"
+    model = Profile
+    fields = ["website", "biography", "phone_number", "picture"]
 
-    return render(
-        request=request,
-        template_name="users/update_profile.html",
-        context={"profile": profile, "user": request.user, "form": form},
-    )
+    def get_object(self):
+        """Return user's  profile"""
+        return self.request.user.profile
+    
+    def get_success_url(self):
+        """return ro user's profile"""
+        username = self.object.user.username
+        return reverse("users:detail", kwargs={"username": username})
