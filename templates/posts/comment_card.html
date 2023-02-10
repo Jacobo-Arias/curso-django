@@ -1,0 +1,7 @@
+<p class="mt-1 ml-2" >
+    <a href="{% url "users:detail" post.user.username %}"> 
+        <img class="rounded-circle" height="30px" width="30px" src="{{ post.profile.picture.url }}" alt="{{ post.user.get_full_name }}">
+        {{ comment.profile.user.username }}
+    </a>
+    : {{ comment.text }} 
+</p>
