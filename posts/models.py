@@ -20,6 +20,12 @@ class Posts(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
+    likes = models.ManyToManyField(
+        usr.Profile,
+        verbose_name="like",
+        related_name="post_likes",
+    )
+
     def __str__(self):
         """Return title and username"""
         return f"{self.title} by @{self.user.username}"
@@ -29,11 +35,17 @@ class Comment(models.Model):
 
     text = models.TextField(max_length=255)
     post = models.ForeignKey(
-        Posts, verbose_name="post comment", on_delete=models.CASCADE
+        Posts, verbose_name="post comment", on_delete=models.CASCADE, null=True
     )
     created = models.DateTimeField(auto_now_add=True)
     profile = models.ForeignKey(
         usr.Profile, verbose_name="user comment", on_delete=models.CASCADE
+    )
+
+    likes = models.ManyToManyField(
+        usr.Profile,
+        verbose_name="like",
+        related_name="comment_likes",
     )
 
     def __str__(self):

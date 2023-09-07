@@ -15,6 +15,8 @@ class Profile(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
+    follow = models.ManyToManyField("self", symmetrical=False, related_name="followers")
+
     website = models.URLField(max_length=200, blank=True)
     biography = models.TextField(blank=True)
     phone = models.CharField(max_length=20, blank=True)

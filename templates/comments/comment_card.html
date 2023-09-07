@@ -1,0 +1,26 @@
+{% for comment in post.comment_set.all %}
+    <li class="list-group-item" >
+        <a href="{% url "users:detail" comment.profile.user.username %}"> 
+            <img class="rounded-circle" height="30px" width="30px" src="{{ comment.profile.picture.url }}" alt="{{ comment.user.get_full_name }}">
+            {{ comment.profile.user.username }}
+        </a>
+        : {{ comment.text }} 
+        {% if  request.user.profile in comment.likes.all %}
+        <a href="{% url "posts:unlike_comment" comment.pk %}" style="color: #000; font-size: 15px;">
+            <i class="fa fa-heart" style="color: red"></i>
+        </a> 
+        {% else %}
+        <a href="{% url "posts:like_comment" comment.pk %}" style="color: #000; font-size: 15px;">
+            <i class="far fa-heart"></i>
+        </a> 
+        {% endif %}
+        <span style="font-size: 15px">
+            {{ comment.likes.all.count | default:'0' }} like{{ comment.likes.all.count|pluralize|default:'s' }}
+        </span>
+    </li>
+{% endfor %}
+<li class="list-group-item">
+    {% if request.resolver_match.url_name == "detail" %}
+        {% include "comments/new.html" %}
+    {% endif %}
+</li>

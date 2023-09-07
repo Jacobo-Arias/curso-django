@@ -20,6 +20,7 @@ class PostAdmin(admin.ModelAdmin):
     list_display_links = ("pk", "title")
 
     search_fields = ("user", "profile", "title", "created", "modified")
+    # filter_horizontal = ("likes",)
 
     list_filter = ("created",)
     inlines = [CommentInline]
@@ -40,3 +41,4 @@ class CommentAdmin(admin.ModelAdmin):
     list_display_links = ("pk", "text")
     list_filter = ("post", "profile")
     search_fields = ("post", "text", "profile", "created")
+    # filter_horizontal = ("likes",)

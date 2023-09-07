@@ -1,6 +1,6 @@
 """User views"""
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 
 # Django
 
@@ -92,3 +92,21 @@ class UpdateProfileView(LoginRequiredMixin, UpdateView):
         """return ro user's profile"""
         username = self.object.user.username
         return reverse("users:detail", kwargs={"username": username})
+
+
+def Follow(request, username):
+    """Vista para dar like a un post"""
+    profile = get_object_or_404(User, username=username)
+    profile = profile.profile
+    user = request.user.profile
+    user.follow.add(profile)
+    return redirect(reverse("users:detail", kwargs={"username": profile.user.username}))
+
+def Unfollow(request, username):
+    """Vista para quitar el like a un post"""
+    profile = get_object_or_404(User, username=username)
+    profile = profile.profile
+    user = request.user.profile
+    user.follow.remove(profile)
+    return redirect(reverse("users:detail", kwargs={"username": profile.user.username}))
+

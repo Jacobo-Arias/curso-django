@@ -1,0 +1,16 @@
+<div class="container">
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group input-group mb-3">
+            <input type="hidden" name="post" value="{{ post }}" />
+            <input 
+                type="text" 
+                class="form-control" 
+                placeholder="Add comment" 
+                name="text"
+            >
+            <button class="btn btn-primary" type="submit">Submit </button>
+        </div>
+
+    </form>
+</div>

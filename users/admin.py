@@ -54,11 +54,13 @@ class ProfileAdmin(admin.ModelAdmin):
                 "fields": (
                     ("phone", "website"),
                     ("biography"),
+                    ("follow"),
                 )
             },
         ),
         ("Meta data", {"fields": (("created", "modified"),)}),
     )
+    filter_horizontal = ("follow",)
 
     readonly_fields = ("created", "modified")
 

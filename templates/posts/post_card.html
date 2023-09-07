@@ -1,5 +1,5 @@
-<div class="col-sm-12 col-md-8 offset-md-2 mt-5 p-0 posts-container">
-    <div class="media pt-3 pl-3 pb-1">
+<div class="col-sm-12 col-md-8 offset-md-2 mt-5 p-0 posts-container card">
+    <div class="media pt-3 pl-3 pb-1 card-img-top">
         <a href="{% url "users:detail" post.user.username %}"> 
             <img class="mr-3 rounded-circle" height="40" width="40" src="{{ post.profile.picture.url }}" alt="{{ post.user.get_full_name }}">
         </a>
@@ -11,14 +11,25 @@
     <img style="width: 100%;" src="{{ post.photo.url }}" alt="{{ post.title }}">
 
     <p class="ml-2 mt-0 mb-2">
-        <b>{{ post.title }}</b> - <small>{{ post.created }}</small>
+        <a href="{% url "posts:detail" post.pk %}" class="card-link">    
+            <b>{{ post.title }}</b>
+        </a>
+         - 
+        <small>{{ post.created }}</small>
     </p>
     <p class="mt-1 ml-2" >
-        <a href="" style="color: #000; font-size: 20px;">
-            <i class="far fa-heart"></i>
-        </a> 30 likes
-        {% for comment in post.comment_set.all %}
-            {% include "posts/comment_card.html" %}
-        {% endfor %}
+        {% if  request.user.profile in post.likes.all %}
+            <a href="{% url 'posts:unlike_post' post.pk %}" style="color: #000; font-size: 20px;">
+                <i class="fa fa-heart" style="color: red"></i>
+            </a> 
+        {% else %}
+            <a href="{% url 'posts:like_post' post.pk %}" style="color: #000; font-size: 20px;">
+                <i class="far fa-heart"></i>
+            </a> 
+        {% endif %}
+        {{ post.likes.all.count | default:'0' }} like{{ post.likes.all.count|pluralize|default:'s' }}
+        
+        {% include "comments/comment_card.html" %}
+        
     </p>
 </div>

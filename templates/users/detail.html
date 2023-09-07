@@ -28,23 +28,34 @@
                             Edit profile
                         </a>
                     {% else %}
-                        <a
-                            href=""
+                        {% if request.user.profile in user.profile.followers.all %}
+                            <a
+                            id="follow-unfollow"
+                            href="{% url "users:unfollow" user.username %}"
                             class="ml-5 btn btn-sm btn-primary"
-                        >
+                            >
+                            Unfollow
+                            </a>
+                        {% else %}
+                            <a
+                            id="follow-unfollow"
+                            href="{% url "users:follow" user.username %}"
+                            class="ml-5 btn btn-sm btn-primary"
+                            >
                             Follow
-                        </a>
+                            </a>
+                        {% endif %}
                     {% endif %}
                 </h2>
                 <div class="row mt-2" style="font-size: 1.2em">
                     <div class="col-sm-4">
-                        <b>{{ user.profile.posts_count }}785</b> posts
+                        <b>{{ user.profile.posts_set.count | default:"0" }}</b> post{{ user.profile.posts_set.count | pluralize}}
                     </div>
                     <div class="col-sm-4">
-                        <b>{{ user.profile.followers }}1,401</b> followers
+                        <b>{{ user.profile.followers.all.count | default:"0" }}</b> follower{{ user.profile.follow.all.count | pluralize }}
                     </div>
                     <div class="col-sm-4">
-                        <b>{{ user.profile.following }}491</b> following
+                        <b>{{ user.profile.follow.all.count | default:"0"}}</b> followed
                     </div>
                 </div>
                 <div class="row mt-4">
@@ -70,9 +81,16 @@
                         <b>{{ post.title }}</b> - <small>{{ post.created }}</small>
                     </p>
                     <p class="mt-1 ml-2" >
-                        <a href="" style="color: #000; font-size: 20px;">
-                            <i class="far fa-heart"></i>
-                        </a> 30
+                        {% if  request.user.profile in post.likes.all %}
+                            <a href="{% url 'posts:unlike_post' post.pk %}" style="color: #000; font-size: 20px;">
+                                <i class="fa fa-heart" style="color: red"></i>
+                            </a> 
+                        {% else %}
+                            <a href="{% url 'posts:like_post' post.pk %}" style="color: #000; font-size: 20px;">
+                                <i class="far fa-heart"></i>
+                            </a> 
+                        {% endif %}
+                        {{ post.likes.all.count | default:'0' }}
                     </p>
                 </div>
             </div>
