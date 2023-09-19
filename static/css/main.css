@@ -47,3 +47,11 @@ body {
 #user-posts #post-thumb {
     background: #fff;
 }
+
+.like-button {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    display: inline-block;
+    cursor: pointer;
+}

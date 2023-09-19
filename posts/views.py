@@ -2,6 +2,7 @@
 # Django
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.views import View
@@ -80,29 +81,24 @@ def postLikeView(request, post_id):
     """Vista para dar like a un post"""
     post = get_object_or_404(Posts, pk=post_id)
     user = request.user.profile
-    post.likes.add(user)
-    return redirect(reverse("posts:detail", kwargs={"id_post": post.pk}))
-
-def postUnlikeView(request, post_id):
-    """Vista para quitar el like a un post"""
-    post = get_object_or_404(Posts, pk=post_id)
-    user = request.user.profile
-    post.likes.remove(user)
-    return redirect(reverse("posts:detail", kwargs={"id_post": post.pk}))
+    if user in post.likes.all():
+        post.likes.remove(user)
+        is_liked = False
+    else:
+        post.likes.add(user)
+        is_liked = True
+    return JsonResponse({"likes_count":post.likes.count(), "is_liked":is_liked})
 
 def commentLikeView(request, comment_id):
     """Vista para dar like a un post"""
     comment = get_object_or_404(Comment, pk=comment_id)
     user = request.user.profile
     post = comment.post
-    comment.likes.add(user)
-    return redirect(reverse("posts:detail", kwargs={"id_post": post.pk}))
-
-def commentUnlikeView(request, comment_id):
-    """Vista para quitar el like a un post"""
-    comment = get_object_or_404(Comment, pk=comment_id)
-    post = comment.post
-    user = request.user.profile
-    comment.likes.remove(user)
-    return redirect(reverse("posts:detail", kwargs={"id_post": post.pk}))
+    if user in comment.likes.all():
+        comment.likes.remove(user)
+        is_liked = False
+    else:
+        comment.likes.add(user)
+        is_liked = True
+    return JsonResponse({"likes_count":comment.likes.count(), "is_liked":is_liked})
 

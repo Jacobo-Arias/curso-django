@@ -8,6 +8,9 @@
 
 <div class="container">
     {% include "posts/post_card.html" %}
+    {% load static %}
+    <script src="{% static 'js/post_like.js' %}"></script>
+    <script src="{% static 'js/comment_like.js' %}"></script>
 </div>
 
 {% endblock %}

@@ -18,18 +18,22 @@
         <small>{{ post.created }}</small>
     </p>
     <p class="mt-1 ml-2" >
-        {% if  request.user.profile in post.likes.all %}
-            <a href="{% url 'posts:unlike_post' post.pk %}" style="color: #000; font-size: 20px;">
+        {% comment %} <a href="{% url 'posts:like_post' post.pk %}" style="color: #000; font-size: 20px;"> {% endcomment %}
+        <button type="button" id="like-post" class="like-button" 
+            style="font-size: 1.15em;" 
+            data-like-url="{% url 'posts:like_post' post.pk %}"
+            >
+            {% if  request.user.profile in post.likes.all %}
                 <i class="fa fa-heart" style="color: red"></i>
-            </a> 
-        {% else %}
-            <a href="{% url 'posts:like_post' post.pk %}" style="color: #000; font-size: 20px;">
+            {% else %}
                 <i class="far fa-heart"></i>
-            </a> 
-        {% endif %}
-        {{ post.likes.all.count | default:'0' }} like{{ post.likes.all.count|pluralize|default:'s' }}
+            {% endif %}
+        </button>
+        <span id="post_likes_count">{{ post.likes.all.count | default:'0' }}</span>
+        <span> like{{ comment.likes.all.count|pluralize|default:'s' }} </span>
         
         {% include "comments/comment_card.html" %}
         
     </p>
+
 </div>

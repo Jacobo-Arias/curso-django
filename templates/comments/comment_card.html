@@ -5,17 +5,20 @@
             {{ comment.profile.user.username }}
         </a>
         : {{ comment.text }} 
-        {% if  request.user.profile in comment.likes.all %}
-        <a href="{% url "posts:unlike_comment" comment.pk %}" style="color: #000; font-size: 15px;">
-            <i class="fa fa-heart" style="color: red"></i>
-        </a> 
-        {% else %}
-        <a href="{% url "posts:like_comment" comment.pk %}" style="color: #000; font-size: 15px;">
-            <i class="far fa-heart"></i>
-        </a> 
-        {% endif %}
-        <span style="font-size: 15px">
-            {{ comment.likes.all.count | default:'0' }} like{{ comment.likes.all.count|pluralize|default:'s' }}
+        <button type="button" id="like-comment" class="like-button" 
+        style="font-size: 0.9em;" 
+        data-like-url="{% url 'posts:like_comment' post.pk %}">
+            {% if  request.user.profile in comment.likes.all %}
+                <i class="fa fa-heart" style="color: red"></i>
+            {% else %}
+                <i class="far fa-heart"></i>
+            {% endif %}
+        </button> 
+        <span style="font-size: 15px" id="comment_likes_count">
+            {{ comment.likes.all.count | default:'0' }} 
+        </span>
+        <span>
+        like{{ comment.likes.all.count|pluralize|default:'s' }}
         </span>
     </li>
 {% endfor %}
